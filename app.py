@@ -27,6 +27,10 @@ def find_model():
 
 model_name = find_model()
 
+# Descargar y cargar el modelo
+model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
+model.conf = 0.4  # Umbral de confianza
+
 def get_prediction(img_bytes):
     img = Image.open(io.BytesIO(img_bytes))
     img = img.resize((640, 640))
