@@ -30,7 +30,7 @@ model_name = find_model()
 # Descargar y cargar el modelo
 
 
-def get_prediction(img_bytes):
+def get_prediction(img_bytes, model_name):
     img = Image.open(io.BytesIO(img_bytes))
     img = img.resize((640, 640))
     imgs = [img]  # lista de imágenes en batch
@@ -83,8 +83,8 @@ def predict():
             return
             
         img_bytes = file.read()
-        result_image = get_prediction(img_bytes)[0]
-        score = get_prediction(img_bytes)[1]
+        result_image = get_prediction(img_bytes, model_name)[0]
+        score = get_prediction(img_bytes, model_name)[1]
         
         filename = 'image0.jpg'
         result_image.save(os.path.join(app.config['RESULT_FOLDER'], filename))
