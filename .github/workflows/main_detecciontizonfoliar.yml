@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v1
         with:
-          python-version: '3.10'
+          python-version: '3.10.5'
 
       - name: Create and start virtual environment
         run: |
@@ -61,3 +61,7 @@ jobs:
           app-name: 'detecciontizonfoliar'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1B895B473FC840E8885D2064CFFDD5F1 }}
+          
+      - name: 'Run Flask app'
+        run: |
+          python app.py
