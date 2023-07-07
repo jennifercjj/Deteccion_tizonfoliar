@@ -30,7 +30,7 @@ def find_model():
 # Descargar y cargar el modelo
 
 
-def get_prediction(img_bytes):
+def get_prediction(img_bytes, model):
     img = Image.open(io.BytesIO(img_bytes))
     img = img.resize((640, 640))
     imgs = [img]  # lista de imágenes en batch
@@ -80,10 +80,14 @@ def predict():
         file = request.files.get('file')
         if not file:
             return
-            
+         
+        # Descargar y cargar el modelo
+        model_name = find_model()
+        model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
+        model.conf = 0.4  # Umbral de confianza   
         img_bytes = file.read()
-        result_image = get_prediction(img_bytes)[0]
-        score = get_prediction(img_bytes)[1]
+        result_image = get_prediction(img_bytes, model)[0]
+        score = get_prediction(img_bytes, model)[1]
         
         filename = 'image0.jpg'
         result_image.save(os.path.join(app.config['RESULT_FOLDER'], filename))
@@ -93,9 +97,5 @@ def predict():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    # Descargar y cargar el modelo
-    model_name = find_model()
-    model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
-    model.conf = 0.4  # Umbral de confianza
     app.run()
 
