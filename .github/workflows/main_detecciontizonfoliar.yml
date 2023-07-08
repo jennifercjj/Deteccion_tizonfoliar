@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'detecciontizonfoliar'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F503A0F64FD24339BA56CCADA8FD4BBD }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_033CC6B05AD14A96A507503B6C0A587C }}
