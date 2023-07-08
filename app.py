@@ -27,7 +27,7 @@ def find_model():
             return f
     print("Por favor, coloca un archivo de modelo en este directorio!")
 
-def get_prediction(img_bytes):
+def get_prediction(img_bytes, model):
     img = Image.open(io.BytesIO(img_bytes))
     img = img.resize((640, 640))
     imgs = [img]  # lista de imágenes en batch
@@ -44,6 +44,7 @@ def get_prediction(img_bytes):
     for i, result in enumerate(results.pred):
         for box, class_id, score in zip(result[:, :4], result[:, 5].tolist(), result[:, 4].tolist()):
             x1, y1, x2, y2 = box
+            class_name = class_labels[int(class_id)]
             score2 = score
             label = f"Tizón Foliar: {score*100:.1f}%"
             
@@ -75,7 +76,7 @@ def predict():
             return
             
         img_bytes = file.read()
-        result_image, score = get_prediction(img_bytes)
+        result_image, score = get_prediction(img_bytes, model)
         
         filename = 'image0.jpg'
         result_image.save(os.path.join(app.config['RESULT_FOLDER'], filename))
