@@ -126,7 +126,8 @@
   box-sizing: border-box;
   width: 100%;
   max-width: 600px;
-  height: 800px;
+  height: 100%;
+  max-height: 800px;
   padding: 25px;
   border: 2px solid #00000020;
   border-radius: 30px;
@@ -276,18 +277,4 @@
 }
 
 /* Pie de pagina */
-.footer {
-  background-color: #0c2342;
-  color: #fff;
-  padding: 20px;
-  text-align: center;
-  top: 40px;
-  margin-top: 40px;
-}
-
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  top: 40px;
-}
 
