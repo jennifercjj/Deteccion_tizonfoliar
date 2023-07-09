@@ -27,10 +27,6 @@ def find_model():
             return f
     print("Por favor, coloca un archivo de modelo en este directorio!")
 
-# Descargar y cargar el modelo
-model_name = find_model()
-model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
-model.conf = 0.4  # Umbral de confianza
 
 def get_prediction(img_bytes, model):
     img = Image.open(io.BytesIO(img_bytes))
@@ -91,4 +87,8 @@ def predict():
     return render_template('index.html')
 
 if __name__ == '__main__':
+    # Descargar y cargar el modelo
+    model_name = find_model()
+    model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
+    model.conf = 0.4  # Umbral de confianza
     app.run()
