@@ -60,7 +60,7 @@ jobs:
         with:
           app-name: 'detecciontizonfoliar'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_033CC6B05AD14A96A507503B6C0A587C }}
-      
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_AE6645F373CD401093C9934119564DA7 }}
+          
       - name: 'Start Flask application'
         run: python app.py
