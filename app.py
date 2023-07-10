@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.static_folder = 'static'
 RESULT_FOLDER = os.path.join('static')
 app.config['RESULT_FOLDER'] = RESULT_FOLDER
-app.debug = False
+app.debug = True
 
 # Constantes
 BOUNDING_BOX_COLOR = (255, 0, 0)
