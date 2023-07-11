@@ -41,12 +41,12 @@ networkx==3.1
 numpy==1.23.5
 oauthlib==3.2.2
 opencv-python==4.8.0.74
+opencv-python-headless==4.8.0.74
 packaging==23.1
 pandas==2.0.3
 parso==0.8.3
 pickleshare==0.7.5
 Pillow==9.2.0
-pip==23.1.2
 platformdirs==2.5.2
 prompt-toolkit==3.0.38
 protobuf==4.21.2
@@ -92,5 +92,3 @@ virtualenv==20.16.5
 wcwidth==0.2.6
 Werkzeug==2.2.2
 whitenoise==6.2.0
-ffmpeg
-opencv-python-headless
