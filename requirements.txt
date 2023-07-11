@@ -93,3 +93,4 @@ wcwidth==0.2.6
 Werkzeug==2.2.2
 whitenoise==6.2.0
 ffmpeg
+opencv-python-headless
