@@ -27,6 +27,9 @@ def find_model():
             return f
     print("Por favor, coloca un archivo de modelo en este directorio!")
 
+model_name = find_model()
+model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
+model.conf = 0.4  # Umbral de confianza
 
 def get_prediction(img_bytes, model):
     img = Image.open(io.BytesIO(img_bytes))
