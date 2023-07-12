@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.static_folder = 'static'
 RESULT_FOLDER = os.path.join('static')
 app.config['RESULT_FOLDER'] = RESULT_FOLDER
-app.debug = True
+app.debug = False
 
 # Constantes
 BOUNDING_BOX_COLOR = (255, 0, 0)
@@ -28,10 +28,8 @@ def find_model():
     print("Por favor, coloca un archivo de modelo en este directorio!")
 
 model_name = find_model()
-model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
-model.conf = 0.4  # Umbral de confianza
 
-def get_prediction(img_bytes, model):
+def get_prediction(img_bytes):
     img = Image.open(io.BytesIO(img_bytes))
     img = img.resize((640, 640))
     imgs = [img]  # lista de imágenes en batch
@@ -50,7 +48,7 @@ def get_prediction(img_bytes, model):
             x1, y1, x2, y2 = box
             class_name = class_labels[int(class_id)]
             score2 = score
-            label = f"Tizón Foliar: {score*100:.1f}%"
+            label = f"Tizón foliar: {score*100:.2f}%"
             
             # Ajustar el tamaño del label según el texto
             font_size = MAX_FONT_SIZE
@@ -80,7 +78,7 @@ def predict():
             return
             
         img_bytes = file.read()
-        result_image, score = get_prediction(img_bytes, model)
+        result_image, score = get_prediction(img_bytes)
         
         filename = 'image0.jpg'
         result_image.save(os.path.join(app.config['RESULT_FOLDER'], filename))
@@ -91,7 +89,7 @@ def predict():
 
 if __name__ == '__main__':
     # Descargar y cargar el modelo
-    model_name = find_model()
+    
     model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
     model.conf = 0.4  # Umbral de confianza
     app.run()
