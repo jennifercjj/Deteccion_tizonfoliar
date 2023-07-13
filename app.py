@@ -3,7 +3,9 @@ import io
 import os
 import torch
 import tempfile
+import time
 from flask import Flask, render_template, request, redirect
+from threading import Thread
 
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -30,8 +32,15 @@ def find_model():
     print("Por favor, coloca un archivo de modelo en este directorio!")
 
 def get_unique_filename():
+    timestamp = str(int(time.time()))
     _, filename = tempfile.mkstemp(suffix=".jpg", dir=app.config['RESULT_FOLDER'])
     return os.path.basename(filename)
+
+def delete_result_image(filename):
+    time.sleep(60)  # Wait for 1 minute
+    filepath = os.path.join(app.config['RESULT_FOLDER'], filename)
+    if os.path.exists(filepath):
+        os.remove(filepath)
 
 model_name = find_model()
 model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
@@ -90,6 +99,8 @@ def predict():
         
         filename = get_unique_filename()
         result_image.save(os.path.join(app.config['RESULT_FOLDER'], filename))
+        delete_thread = Thread(target=delete_result_image, args=(filename,))
+        delete_thread.start()
         
         return render_template('result.html', result_image=filename, model_name=model_name, score=score)
 
