@@ -2,6 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 import io
 import os
 import torch
+import tempfile
 from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
@@ -17,6 +18,7 @@ LABEL_TEXT_COLOR = (255, 255, 255)
 MIN_FONT_SIZE = 15
 MAX_FONT_SIZE = 17
 
+
 @app.errorhandler(404)
 def page_not_found(error):
     return "Página no encontrada", 404
@@ -27,7 +29,13 @@ def find_model():
             return f
     print("Por favor, coloca un archivo de modelo en este directorio!")
 
+def get_unique_filename():
+    _, filename = tempfile.mkstemp(suffix=".jpg", dir=app.config['RESULT_FOLDER'])
+    return os.path.basename(filename)
+
 model_name = find_model()
+model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
+model.conf = 0.4  # Umbral de confianza
 
 def get_prediction(img_bytes):
     img = Image.open(io.BytesIO(img_bytes))
@@ -80,7 +88,7 @@ def predict():
         img_bytes = file.read()
         result_image, score = get_prediction(img_bytes)
         
-        filename = 'image0.jpg'
+        filename = get_unique_filename()
         result_image.save(os.path.join(app.config['RESULT_FOLDER'], filename))
         
         return render_template('result.html', result_image=filename, model_name=model_name, score=score)
@@ -89,7 +97,4 @@ def predict():
 
 if __name__ == '__main__':
     # Descargar y cargar el modelo
-    
-    model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
-    model.conf = 0.4  # Umbral de confianza
     app.run()
