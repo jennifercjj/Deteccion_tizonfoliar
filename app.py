@@ -60,13 +60,18 @@ def get_prediction(img_bytes):
     img = img.convert("RGB")
     draw = ImageDraw.Draw(img)
     score2 = 0.0
+    # Contar el número de detecciones
+    num_detections = 0
+    
     for i, result in enumerate(results.pred):
+        
         for box, class_id, score in zip(result[:, :4], result[:, 5].tolist(), result[:, 4].tolist()):
+            num_detections += 1
             x1, y1, x2, y2 = box
             class_name = class_labels[int(class_id)]
             score2 = score
-            label = f"Tizón foliar: {score*100:.2f}%"
-            
+            #label = f"Tizón foliar: {score*100:.2f}%"
+            label = f"Tizón foliar: {num_detections}"
             # Ajustar el tamaño del label según el texto
             font_size = MAX_FONT_SIZE
             font = ImageFont.truetype("arial.ttf", font_size)
@@ -79,9 +84,17 @@ def get_prediction(img_bytes):
                 font = ImageFont.truetype("arial.ttf", font_size)
                 label_width, label_height = draw.textsize(label, font=font)
             
+            # Asegurarse de que la etiqueta quede dentro de los límites de la imagen
+            if y1 - label_height - 4 >= 0:
+                label_y1 = y1 - label_height - 4
+                label_y2 = y1
+            else:
+                label_y1 = y1
+                label_y2 = y1 + label_height + 4
+                
             draw.rectangle([(x1, y1), (x2, y2)], outline=BOUNDING_BOX_COLOR, width=3)
-            draw.rectangle([(x1, y1), (x1 + label_width, y1 - label_height - 4)], fill=LABEL_BACKGROUND_COLOR)
-            draw.text((x1, y1 - label_height - 4), label, fill=LABEL_TEXT_COLOR, font=font)
+            draw.rectangle([(x1, label_y1), (x1 + label_width, label_y2)], fill=LABEL_BACKGROUND_COLOR)
+            draw.text((x1, label_y1), label, fill=LABEL_TEXT_COLOR, font=font)
 
     return img, score2
 
@@ -107,5 +120,4 @@ def predict():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    # Descargar y cargar el modelo
     app.run()
