@@ -44,7 +44,7 @@ def delete_result_image(filename):
 
 model_name = find_model()
 model = torch.hub.load("WongKinYiu/yolov7", 'custom', model_name)
-model.conf = 0.4  # Umbral de confianza
+model.conf = 0.5  # Umbral de confianza
 
 def get_prediction(img_bytes):
     img = Image.open(io.BytesIO(img_bytes))
@@ -84,7 +84,6 @@ def get_prediction(img_bytes):
                 font = ImageFont.truetype("arial.ttf", font_size)
                 label_width, label_height = draw.textsize(label, font=font)
             
-            # Asegurarse de que la etiqueta quede dentro de los límites de la imagen
             if y1 - label_height - 4 >= 0:
                 label_y1 = y1 - label_height - 4
                 label_y2 = y1
@@ -95,8 +94,10 @@ def get_prediction(img_bytes):
             draw.rectangle([(x1, y1), (x2, y2)], outline=BOUNDING_BOX_COLOR, width=3)
             draw.rectangle([(x1, label_y1), (x1 + label_width, label_y2)], fill=LABEL_BACKGROUND_COLOR)
             draw.text((x1, label_y1), label, fill=LABEL_TEXT_COLOR, font=font)
+            print(f"{score2 * 100:.2f}%")
 
-    return img, score2
+    
+    return img, score2, num_detections
 
 @app.route('/', methods=['GET', 'POST'])
 def predict():
@@ -108,14 +109,14 @@ def predict():
             return
             
         img_bytes = file.read()
-        result_image, score = get_prediction(img_bytes)
+        result_image, score, num_detections = get_prediction(img_bytes)
         
         filename = get_unique_filename()
         result_image.save(os.path.join(app.config['RESULT_FOLDER'], filename))
         delete_thread = Thread(target=delete_result_image, args=(filename,))
         delete_thread.start()
         
-        return render_template('result.html', result_image=filename, model_name=model_name, score=score)
+        return render_template('result.html', result_image=filename, model_name=model_name, score=score, num_detections=num_detections)
 
     return render_template('index.html')
 
