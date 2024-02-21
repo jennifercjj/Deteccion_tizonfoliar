@@ -103,7 +103,7 @@ def get_prediction(img_bytes):
 def predict():
     if request.method == 'POST':
         if 'file' not in request.files:
-            return redirect(request.url)
+            return redirect('/')
         file = request.files.get('file')
         if not file:
             return
